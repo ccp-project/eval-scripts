@@ -1,0 +1,9 @@
+[submodule "portus"]
+	path = portus
+	url = git@github.mit.edu:nebula/portus
+[submodule "ccp-kernel"]
+	path = ccp-kernel
+	url = git@github.mit.edu:nebula/ccp-kernel
+[submodule "mahimahi"]
+	path = mahimahi
+	url = git@github.com:akshayknarayan/mahimahi
