@@ -10,7 +10,7 @@ algs = {
 
 def start(dest, alg, name):
     subprocess.run('mkdir ./{} 2> /dev/null'.format(dest), shell=True)
-    cmd = 'sudo {0} --ipc=netlink 2> ./{1}/{2}-ccp.log'.format(algs[alg], dest, alg, name)
+    cmd = 'sudo {0} --ipc=netlink > ./{1}/ccp-tmp.log 2> ./{1}/{2}-ccp.log'.format(algs[alg], dest, name)
     ccp_proc = subprocess.run(cmd, shell=True)
 
 if __name__ == '__main__':

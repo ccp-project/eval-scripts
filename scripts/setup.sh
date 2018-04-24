@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# reset everything
+sudo killall iperf
+sudo rmmod ccp
+
+# don't need to be un-done
 sudo modprobe tcp_bbr
 sudo modprobe tcp_probe
 sudo sysctl -w net.ipv4.ip_forward=1
