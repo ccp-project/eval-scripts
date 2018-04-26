@@ -7,4 +7,4 @@ mm-delay 10 mm-link ./mm-traces/Verizon-LTE-short.up ./mm-traces/Verizon-LTE-sho
 sudo killall dd 2> /dev/null
 grep ":4242" "./$1/$3-cell-tmp.log" > "./$1/$3-cell-tcpprobe.log"
 rm -f "./$1/$3-cell-tmp.log"
-mm-graph ./$1/$3-cell-mahimahi.log 30 > ./$1/$3-cell-mahimahi.eps
+mm-graph ./$1/$3-cell-mahimahi.log 30 > ./$1/$3-cell-mahimahi.eps 2> ./$1/$3-cell-mmgraph.log

@@ -10,15 +10,15 @@ from start_ccp import start as ccp_start
 dest = sys.argv[1]
 iters = int(sys.argv[2])
 dur = sys.argv[3]
-scenarios = ('fixed',)# 'cell', 'drop')
+scenarios = ('fixed', 'cell', 'drop')
 algs = {
     'reno': './portus/ccp_generic_cong_avoid/target/debug/reno',
-    #'cubic': './portus/ccp_generic_cong_avoid/target/debug/cubic',
+    'cubic': './portus/ccp_generic_cong_avoid/target/debug/cubic',
 }
 
 ccp_exps = [(a, 'ccp', '{}-ccp'.format(a)) for a in algs]
-#kernel_exps = [(a, a, '{}-kernel'.format(a)) for a in algs]
-exps = ccp_exps# + kernel_exps
+kernel_exps = [(a, a, '{}-kernel'.format(a)) for a in algs]
+exps = ccp_exps + kernel_exps
 
 print("setup")
 print("=========================")
@@ -56,6 +56,8 @@ for alg, sockopt, name in exps:
 
 subprocess.run('sudo killall iperf 2> /dev/null', shell=True)
 
-### Cwnd Evolution
+print("Cwnd Evolution")
+print("=========================")
 subprocess.run('python3 parse/parseCwndEvo.py {0}/* > {0}/cwndevo.log'.format(dest), shell=True)
-subprocess.run('./plot/cwnd-evo.r {0}/cwndevo.log {0}/cwndevo.pdf'.format(dest), shell=True)
+for alg in algs:
+    subprocess.run('./plot/cwnd-evo.r {0}/cwndevo.log {1} {0}/{1}-cwndevo.pdf'.format(dest, alg), shell=True)
