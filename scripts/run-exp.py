@@ -46,13 +46,29 @@ def exps(exps, dest, iters, dur, scenarios):
 
     subprocess.run('sudo killall iperf 2> /dev/null', shell=True)
 
-def plot(dest, algs):
-    print("Cwnd Evolution")
+def plot(dest, algs, scenarios):
+    print("Cwnd Evolution Plots")
     print("=========================")
-    subprocess.run('python3 parse/parseCwndEvo.py {0}/* > {0}/cwndevo.log'.format(dest), shell=True)
-    subprocess.run('python3 parse/sampleCwndEvo.py {0}/cwndevo.log 1000 > {0}/cwndevo-subsampled.log'.format(dest), shell=True)
+    if not os.path.exists("{0}/cwndevo.log".format(dest)):
+        print("> Parsing logs")
+        subprocess.run('python3 parse/parseCwndEvo.py {0}/* > {0}/cwndevo.log'.format(dest), shell=True)
+    else:
+        print("> Logs already parsed")
+
+    if not os.path.exists("{0}/cwndevo-subsampled.log".format(dest)):
+        print("> Subsampling logs for plotting")
+        subprocess.run('python3 parse/sampleCwndEvo.py {0}/cwndevo.log 1000 > {0}/cwndevo-subsampled.log'.format(dest), shell=True)
+    else:
+        print("> Logs already subsampled")
+
+    print("> Plotting")
     for alg in algs:
-        subprocess.run('./plot/cwnd-evo.r {0}/cwndevo-subsampled.log {1} {0}/{1}-cwndevo.pdf'.format(dest, alg), shell=True)
+        for s in scenarios:
+            if not os.path.exists("{0}/{1}-{2}-cwndevo.pdf".format(dest, alg, s)):
+                subprocess.run('./plot/cwnd-evo.r {0}/cwndevo-subsampled.log {1} {2} {0}/{1}-{2}-cwndevo.pdf'.format(dest, alg, s), shell=True)
+                print("wrote {0}/{1}-cwndevo.pdf".format(dest, alg))
+            else:
+                print("{0}/{1}-{2}-cwndevo.pdf' already present".format(dest, alg, s))
 
 if __name__ == '__main__':
     dest = sys.argv[1]
@@ -67,11 +83,12 @@ if __name__ == '__main__':
     ccp_exps = [(a, 'ccp', '{}-ccp'.format(a)) for a in algs]
     kernel_exps = [(a, a, '{}-kernel'.format(a)) for a in algs]
 
+    print("Running Experiments")
+    print("=========================")
     if not os.path.exists(dest):
-        print("Running Experiments")
-        print("=========================")
         setup(dest)
         exps(ccp_exps + kernel_exps, dest, iters, dur, scenarios)
     else:
         print("> Experiments already run, re-plotting")
-    plot(dest, algs)
+    print()
+    plot(dest, algs, scenarios)
