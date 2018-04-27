@@ -14,14 +14,14 @@ def read(fn):
                 continue
             yield float(sp[0]), float(sp[6]) # rtt = sp[-2]
 
-# filenames: <alg>-<impl>-<i>-<scenario>-tcpprobe.log
+# filenames: <alg>-<impl>-<scenario>-<i>-tcpprobe.log
 def binAlgs(fns):
     plots = {}
     for fn in fns:
         sp = fn.split('-')
         if sp[-1] != "tcpprobe.log":
             continue
-        alg, impl, i, scenario = sp[:-1]
+        alg, impl, scenario, i = sp[:-1]
         pl = (alg, impl, scenario, i)
         if pl in plots:
             plots[pl].append(fn)
