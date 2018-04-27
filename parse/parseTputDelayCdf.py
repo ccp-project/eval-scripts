@@ -1,7 +1,64 @@
-import sys
-from plotMahimahi import get_throughput_data, get_delay_data, get_throughput, get_delays
+#!/usr/bin/python3
 
+import sys
 import numpy as np
+import subprocess
+
+def get_throughput_data(fn):
+    cmd = "grep ' + ' {} | awk '{{print $1, $3}}'".format(fn)
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
+    for l in res.stdout.decode("utf-8").split('\n'):
+        sp = l.split(" ")
+        if len(sp) != 2:
+            continue
+        t, v = sp
+        yield float(t) / 1e3, float(v)
+
+def get_delay_data(fn):
+    cmd = "grep ' - ' {} | awk '{{print $1, $5}}'".format(fn)
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
+    for l in res.stdout.decode("utf-8").split('\n'):
+        sp = l.split(" ")
+        if len(sp) != 2:
+            continue
+        t, v = sp
+        yield float(t) / 1e3, float(v)
+
+def get_throughput(data, start_time, end_time, binsize):
+    bin_start = start_time
+    last_t = start_time
+    current_bin_tput = 0
+    for t, p in data:
+        if t < start_time or t > end_time:
+            continue
+
+        if t > (bin_start + binsize): # start new bin
+            yield bin_start, current_bin_tput / binsize
+            bin_start = t
+            current_bin_tput = 0
+        else:
+            current_bin_tput += p * 8.0
+            last_t = t
+
+    yield bin_start, current_bin_tput / binsize
+
+
+def get_delays(data, bin_times):
+    next_bin = next(bin_times)
+    delays = []
+    for t, p in data:
+        if t < next_bin:
+            delays.append(p)
+        else:
+            if len(delays) > 0:
+                yield np.mean(delays)
+            else:
+                yield 0
+            delays = []
+            delays.append(p)
+            next_bin = next(bin_times)
+
+    yield np.mean(delays)
 
 def get_times(fn, binsize):
     bin_start = 0
@@ -20,14 +77,14 @@ def get_expt_data(fn):
     dl = get_delays(td, iter(ts))
     return zip(ts, tp, dl)
 
-# filenames: <alg>-<impl>-<i>-<scenario>-mahimahi.log
+# filenames: <alg>-<impl>-<scenario>-<i>-mahimahi.log
 def binAlgs(fns):
     plots = {}
     for fn in fns:
         sp = fn.split('-')
         if sp[-1] != "mahimahi.log":
             continue
-        alg, impl, i, scenario = sp[:-1]
+        alg, impl, scenario, i = sp[:-1]
         pl = (alg, impl, scenario, i)
         if pl in plots:
             plots[pl].append(fn)

@@ -19,8 +19,9 @@ def setup(dest):
     print("=========================")
     sh.run('./scripts/setup.sh', shell=True)
 
-    sh.run('mkdir -p {}'.format(dest), shell=True)
-    print("> dest: {}".format(dest))
+    if not os.path.exists(dest):
+        sh.run('mkdir -p {}'.format(dest), shell=True)
+        print("> dest: {}".format(dest))
     sh.Popen('./scripts/run-iperf-server.sh > {0}/iperf-server.log'.format(dest), shell=True)
     print("> started iperf server")
 
@@ -30,13 +31,17 @@ def exps(exps, dest, iters, dur, scenarios):
     for alg, sockopt, name in exps:
         for trace in scenarios:
             for i in range(iters):
+                outprefix = "{}-{}-{}".format(name, trace, i)
+                if os.path.exists("./{}/{}-mahimahi.log".format(dest, outprefix)):
+                    print(">", outprefix, 'done')
+                    continue
+
                 if sockopt == 'ccp':
                     sh.run('sudo killall reno cubic bbr 2> /dev/null', shell=True)
                     ccp_args = '--deficit_timeout=20'
                     threading.Thread(target=ccp_start, args=(dest, alg, '{}-{}-{}'.format(name, trace, i), ccp_args), daemon=True).start()
                     time.sleep(1)
 
-                outprefix = "{}-{}-{}".format(name, trace, i)
                 print(">", outprefix)
 
                 sh.run("sudo dd if=/dev/null of=/proc/net/tcpprobe 2> /dev/null", shell=True)
@@ -63,7 +68,7 @@ def exps(exps, dest, iters, dur, scenarios):
                 elif trace == 'drop':
                     sh.run('mm-delay 10 \
                             mm-link ./mm-traces/bw96.mahi ./mm-traces/bw96.mahi \
-                              --uplink-log="./{0}/{1}-drop-mahimahi.log" \
+                              --uplink-log="./{0}/{1}-mahimahi.log" \
                             mm-loss uplink 0.0001 \
                             -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur), shell=True)
                 else:
@@ -87,6 +92,7 @@ def plot(dest, algs, scenarios):
     if not os.path.exists("{0}/cwndevo.log".format(dest)):
         print("> Parsing logs")
         sh.run('python3 parse/parseCwndEvo.py {0}/* > {0}/cwndevo.log'.format(dest), shell=True)
+        sh.run('python3 parse/parseTputDelayCdf.py {0}/* > {0}/tput-delay-cdf.log'.format(dest), shell=True)
     else:
         print("> Logs already parsed")
 
@@ -117,10 +123,8 @@ if __name__ == '__main__':
         print("> Don't put '-' in the output directory name")
         sys.exit()
 
-    if not os.path.exists(dest):
-        setup(dest)
-        exps(ccp_exps + kernel_exps, dest, iters, dur, scenarios)
-    else:
-        print("> Experiments already run, re-plotting")
+    setup(dest)
+    exps(ccp_exps + kernel_exps, dest, iters, dur, scenarios)
+
     print()
     plot(dest, algs, scenarios)
