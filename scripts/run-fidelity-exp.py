@@ -6,6 +6,7 @@ import subprocess as sh
 import time
 import threading
 
+from setup import setup
 from start_ccp import start as ccp_start
 
 scenarios = ('fixed', 'cell', 'drop')
@@ -13,17 +14,6 @@ algs = {
     'reno': './portus/ccp_generic_cong_avoid/target/debug/reno',
     'cubic': './portus/ccp_generic_cong_avoid/target/debug/cubic',
 }
-
-def setup(dest):
-    print("setup")
-    print("=========================")
-    sh.run('./scripts/setup.sh', shell=True)
-
-    if not os.path.exists(dest):
-        sh.run('mkdir -p {}'.format(dest), shell=True)
-        print("> dest: {}".format(dest))
-    sh.Popen('./scripts/run-iperf-server.sh > {0}/iperf-server.log'.format(dest), shell=True)
-    print("> started iperf server")
 
 def exps(exps, dest, iters, dur, scenarios):
     print("Running Experiments")
