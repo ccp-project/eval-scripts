@@ -26,6 +26,9 @@ def exps(exps, dest, iters, dur, maxNumFlows):
                     print(">", outprefix, 'done')
                     continue
 
+                sh.run('killall -9 iperf', shell=True)
+                sh.Popen('./scripts/run-iperf-server.sh > {0}/{1}-iperf_server.log 2> /dev/null'.format(dest, outprefix), shell=True)
+
                 if 'ccp' in name:
                     sh.run('sudo killall reno cubic bbr 2> /dev/null', shell=True)
                     ccp_args = ''
@@ -36,6 +39,7 @@ def exps(exps, dest, iters, dur, maxNumFlows):
                     threading.Thread(target=ccp_start, args=(dest, 'reno', outprefix, ccp_args), daemon=True).start()
                     time.sleep(1)
 
+                print(">", outprefix)
                 sh.run('iperf -c 127.0.0.1 -p 4242 -Z {} -P {} -t {} > ./{}/{}-iperf.log'.format('ccp' if 'ccp' in name else 'reno', numflows, dur, dest, outprefix), shell=True)
 
                 if 'ccp' in name:
@@ -74,6 +78,6 @@ if __name__ == '__main__':
         print("> Don't put '-' in the output directory name")
         sys.exit()
 
-    setup(dest)
+    setup(dest, startIperf=False)
     exps(scenarios, dest, iters, dur, maxNumFlows)
     plot(dest, scenarios, iters, maxNumFlows)
