@@ -7,3 +7,7 @@
 [submodule "mahimahi"]
 	path = mahimahi
 	url = git@github.com:akshayknarayan/mahimahi
+[submodule "fct_scripts/empirical-traffic-gen"]
+	path = fct_scripts/empirical-traffic-gen
+	url = git@github.mit.edu:nebula/empirical-traffic-gen.git
+	branch = ccp
