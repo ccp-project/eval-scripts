@@ -11,3 +11,6 @@
 	path = fct_scripts/empirical-traffic-gen
 	url = git@github.mit.edu:nebula/empirical-traffic-gen.git
 	branch = ccp
+[submodule "ccp_copa"]
+	path = ccp_copa
+	url = git@github.com:akshayknarayan/ccp_copa.git

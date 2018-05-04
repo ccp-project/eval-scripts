@@ -10,7 +10,7 @@ def setup(dest, startIperf=True):
 
     if not os.path.exists(dest):
         sh.run('mkdir -p {}'.format(dest), shell=True)
-        print("> dest: {}".format(dest))
+        print("> created output directory: {}".format(dest))
 
     if startIperf:
         sh.Popen('./scripts/run-iperf-server.sh > {0}/iperf-server.log'.format(dest), shell=True)
