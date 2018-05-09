@@ -2,7 +2,7 @@
 
 # reset everything
 sudo killall -9 iperf
-sudo rmmod ccp
+sudo ./ccp-kernel/ccp_kernel_unload
 sudo modprobe -r tcp_probe
 
 # don't need to be un-done
@@ -18,5 +18,5 @@ echo "---Build ccp-kernel---"
 cd ccp-kernel && make && cd ..
 
 ulimit -Sn 8192
-sudo insmod ./ccp-kernel/ccp.ko
+sudo ./ccp-kernel/ccp_kernel_load ipc=0
 sudo sysctl -w net.ipv4.tcp_allowed_congestion_control="cubic reno bbr ccp"
