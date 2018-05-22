@@ -18,5 +18,4 @@ echo "---Build ccp-kernel---"
 cd ccp-kernel && make && cd ..
 
 ulimit -Sn 8192
-sudo ./ccp-kernel/ccp_kernel_load ipc=0
-sudo sysctl -w net.ipv4.tcp_allowed_congestion_control="cubic reno bbr ccp"
+cd ccp-kernel && sudo ./ccp_kernel_load ipc=0 && cd ..

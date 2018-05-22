@@ -11,7 +11,7 @@ parser.add_argument('--alg', dest='algs', action='append', type=str, nargs='+', 
 parser.add_argument('--scenario', dest='scenarios', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--kernel', dest='with_kernel', action='store_true', default=False)
 # link configuration
-parser.add_argument('--delay', dest='linkdelay', type=int default='10')
+parser.add_argument('--delay', dest='linkdelay', type=int, default='10')
 parser.add_argument('--rate', dest='fixedrate', default='96')
 parser.add_argument('--qsize', dest='fixedqsize', type=int, default='1')
 
