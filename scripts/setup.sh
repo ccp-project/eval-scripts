@@ -18,4 +18,5 @@ echo "---Build ccp-kernel---"
 cd ccp-kernel && make && cd ..
 
 ulimit -Sn 8192
-cd ccp-kernel && sudo ./ccp_kernel_load ipc=0 && cd ..
+echo $1
+cd ccp-kernel && sudo ./ccp_kernel_load $1 && cd ..

@@ -9,6 +9,7 @@ parser.add_argument('--iters', dest='iters', type=int)
 parser.add_argument('--duration', dest='duration', type=int)
 parser.add_argument('--alg', dest='algs', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--scenario', dest='scenarios', action='append', type=str, nargs='+', default=[['all']])
+parser.add_argument('--ipcs', dest='ipcs', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--kernel', dest='with_kernel', action='store_true', default=False)
 # link configuration
 parser.add_argument('--delay', dest='linkdelay', type=int, default='10')
@@ -17,6 +18,7 @@ parser.add_argument('--qsize', dest='fixedqsize', type=int, default='1')
 
 scenarios = ('fixed', 'cell', 'drop')
 kernel_algs = ['reno', 'cubic', 'bbr', 'vegas']
+ipcs = ('netlink', 'chardev')
 
 import itertools
 import os
@@ -150,17 +152,38 @@ if __name__ == '__main__':
     if 'all' in wanted_algs and len(wanted_algs) == 1:
         wanted_algs = algs.keys()
     else:
-        wanted_algs = wanted_algs[1:]
+        wanted_algs = [a for a in wanted_algs[1:] if a in algs]
 
-    exps = [(a, 'ccp', '{}-ccp'.format(a)) for a in wanted_algs if a in algs]
+    print("> Running algorithms:", ", ".join(wanted_algs))
+
+    wanted_ipcs = list(itertools.chain.from_iterable(parsed.ipcs))
+    if 'all' in wanted_ipcs and len(wanted_ipcs) == 1:
+        wanted_ipcs = ipcs
+    else:
+        wanted_ipcs = [i for i in wanted_ipcs[1:] if i in ipcs]
+
+    print("> Using IPCs:", ",".join(wanted_ipcs))
+
+    # kernel experiments
+    exps = []
     if parsed.with_kernel:
         kernel_exps = [(a, a, '{}-kernel'.format(a)) for a in wanted_algs if a in kernel_algs]
         exps += kernel_exps
 
-    print("> exps:", ', '.join(e[-1] for e in exps))
+        print("> kernel exps:", ', '.join(e[-1] for e in exps))
 
-    setup(dest)
-    run_exps(exps, dest, iters, dur, scns)
+        setup(dest)
+        run_exps(exps, dest, iters, dur, scns)
+
+    # ccp experiments
+    for i in wanted_ipcs:
+        if i not in ipcs:
+            continue
+        exps = [(alg, 'ccp', '{}-ccp_{}'.format(alg, i)) for alg in wanted_algs if alg in algs]
+        print("> ccp exps:", i, ', '.join(e[-1] for e in exps))
+
+        setup(dest, ipc=i)
+        run_exps(exps, dest, iters, dur, scns)
 
     print()
     plot(dest, wanted_algs, scns)

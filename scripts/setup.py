@@ -3,10 +3,11 @@
 import subprocess as sh
 import os
 
-def setup(dest, startIperf=True):
+def setup(dest, startIperf=True, ipc='netlink'):
     print("setup")
     print("=========================")
-    sh.run('./scripts/setup.sh', shell=True)
+    ipc = 'ipc=0' if ipc is 'netlink' else 'ipc=1'
+    sh.run('./scripts/setup.sh {}'.format(ipc), shell=True)
 
     if not os.path.exists(dest):
         sh.run('mkdir -p {}'.format(dest), shell=True)

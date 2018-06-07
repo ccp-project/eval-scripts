@@ -6,7 +6,7 @@ import subprocess
 algs = {
     'reno': './portus/ccp_generic_cong_avoid/target/debug/reno',
     'cubic': './portus/ccp_generic_cong_avoid/target/debug/cubic',
-    'copa': './ccp_copa/target/debug/copa',
+#    'copa': './ccp_copa/target/debug/copa',
 }
 
 def start(dest, alg, name, args):
