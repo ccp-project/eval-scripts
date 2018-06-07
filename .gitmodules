@@ -11,3 +11,6 @@
 [submodule "ccp_copa"]
 	path = ccp_copa
 	url = git@github.com:akshayknarayan/ccp_copa.git
+[submodule "portus"]
+	path = portus
+	url = https://github.com/ccp-project/portus
