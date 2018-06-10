@@ -13,8 +13,8 @@ parser.add_argument('--ipcs', dest='ipcs', action='append', type=str, nargs='+',
 parser.add_argument('--kernel', dest='with_kernel', action='store_true', default=False)
 # link configuration
 parser.add_argument('--delay', dest='linkdelay', type=int, default='10')
-parser.add_argument('--rate', dest='fixedrate', default='96')
-parser.add_argument('--qsize', dest='fixedqsize', type=int, default='1')
+parser.add_argument('--rate', dest='fixedrate', type=int, default='96')
+parser.add_argument('--qsize', dest='fixedqsize', type=int, default='160')
 
 scenarios = ('fixed', 'cell', 'drop')
 kernel_algs = ['reno', 'cubic', 'bbr', 'vegas']
@@ -23,15 +23,16 @@ ipcs = ('netlink', 'chardev')
 import itertools
 import os
 import sys
-import subprocess as sh
 import time
 import threading
 
 from setup import setup
+from setup import reset
 from start_ccp import start as ccp_start
 from start_ccp import algs
+import sh
 
-def run_exps(exps, dest, iters, dur, scenarios):
+def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
     print("Running Experiments")
     print("=========================")
     for alg, sockopt, name in exps:
@@ -47,7 +48,7 @@ def run_exps(exps, dest, iters, dur, scenarios):
                     ccp_args = ''
                     if alg == 'reno' or alg == 'cubic':
                         ccp_args = '--deficit_timeout=20'
-                    threading.Thread(target=ccp_start, args=(dest, alg, '{}-{}-{}'.format(name, trace, i), ccp_args), daemon=True).start()
+                    threading.Thread(target=ccp_start, args=(dest, alg, 'netlink' if 'netlink' in name else 'chardev', '{}-{}-{}'.format(name, trace, i), ccp_args), daemon=True).start()
                     time.sleep(1)
 
                 print(">", outprefix)
@@ -56,14 +57,14 @@ def run_exps(exps, dest, iters, dur, scenarios):
                 sh.run('sudo dd if=/proc/net/tcpprobe of="./{}/{}-tmp.log" 2> /dev/null &'.format(dest, outprefix), shell=True)
 
                 if trace == 'fixed':
-                    sh.run('mm-delay 10 \
-                            mm-link ./mm-traces/bw12.mahi ./mm-traces/bw12.mahi \
+                    sh.run('mm-delay {4} \
+                            mm-link ./mm-traces/bw{5}.mahi ./mm-traces/bw{5}.mahi \
                               --uplink-queue=droptail \
                               --downlink-queue=droptail \
-                              --uplink-queue-args="packets=40" \
-                              --downlink-queue-args="packets=40" \
+                              --uplink-queue-args="packets={6}" \
+                              --downlink-queue-args="packets={6}" \
                               --uplink-log="./{0}/{1}-mahimahi.log" \
-                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur), shell=True)
+                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur, delay, rate, qsize_pkts), shell=False)
                 elif trace == 'cell':
                     sh.run('mm-delay 10 \
                             mm-link ./mm-traces/Verizon-LTE-short.up ./mm-traces/Verizon-LTE-short.down \
@@ -74,14 +75,14 @@ def run_exps(exps, dest, iters, dur, scenarios):
                               --uplink-log="./{0}/{1}-mahimahi.log" \
                             -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur), shell=True)
                 elif trace == 'drop':
-                    sh.run('mm-delay 10 \
-                            mm-link ./mm-traces/bw96.mahi ./mm-traces/bw96.mahi \
+                    sh.run('mm-delay {4} \
+                            mm-link ./mm-traces/bw{6}.mahi ./mm-traces/bw{6}.mahi \
                               --uplink-log="./{0}/{1}-mahimahi.log" \
                             mm-loss uplink 0.0001 \
-                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur), shell=True)
+                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur, delay, rate), shell=True)
                 else:
                     print('unknown', trace)
-                    break
+                    sys.exit(1)
 
                 sh.run("sudo killall dd 2> /dev/null", shell=True)
                 sh.run('grep ":4242" "./{0}/{1}-tmp.log" > "./{0}/{1}-tcpprobe.log"'.format(dest, outprefix), shell=True)
@@ -89,8 +90,10 @@ def run_exps(exps, dest, iters, dur, scenarios):
                 sh.run("mm-graph ./{0}/{1}-mahimahi.log 30 > ./{0}/{1}-mahimahi.eps 2> ./{0}/{1}-mmgraph.log".format(dest, outprefix), shell=True)
 
                 if sockopt == 'ccp':
-                    sh.run('sudo killall ccp 2> /dev/null', shell=True)
+                    sh.run('sudo killall reno cubic bbr copa 2> /dev/null', shell=True)
                     time.sleep(1)
+
+                print(">", outprefix, 'done')
 
     sh.run('sudo killall iperf 2> /dev/null', shell=True)
 
@@ -173,7 +176,7 @@ if __name__ == '__main__':
         print("> kernel exps:", ', '.join(e[-1] for e in exps))
 
         setup(dest)
-        run_exps(exps, dest, iters, dur, scns)
+        run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
 
     # ccp experiments
     for i in wanted_ipcs:
@@ -183,7 +186,9 @@ if __name__ == '__main__':
         print("> ccp exps:", i, ', '.join(e[-1] for e in exps))
 
         setup(dest, ipc=i)
-        run_exps(exps, dest, iters, dur, scns)
+        run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
 
     print()
     plot(dest, wanted_algs, scns)
+
+    reset()
