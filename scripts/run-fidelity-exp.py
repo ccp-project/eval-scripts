@@ -64,7 +64,7 @@ def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
                               --uplink-queue-args="packets={6}" \
                               --downlink-queue-args="packets={6}" \
                               --uplink-log="./{0}/{1}-mahimahi.log" \
-                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur, delay, rate, qsize_pkts), shell=False)
+                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur, delay, rate, qsize_pkts), shell=True)
                 elif trace == 'cell':
                     sh.run('mm-delay 10 \
                             mm-link ./mm-traces/Verizon-LTE-short.up ./mm-traces/Verizon-LTE-short.down \
@@ -76,7 +76,7 @@ def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
                             -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur), shell=True)
                 elif trace == 'drop':
                     sh.run('mm-delay {4} \
-                            mm-link ./mm-traces/bw{6}.mahi ./mm-traces/bw{6}.mahi \
+                            mm-link ./mm-traces/bw{5}.mahi ./mm-traces/bw{5}.mahi \
                               --uplink-log="./{0}/{1}-mahimahi.log" \
                             mm-loss uplink 0.0001 \
                             -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur, delay, rate), shell=True)
