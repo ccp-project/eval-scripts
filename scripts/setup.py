@@ -10,7 +10,7 @@ def setup(dest, startIperf=True, ipc='netlink'):
         sh.run('mkdir -p {}'.format(dest), shell=True)
         print("> created output directory: {}".format(dest))
 
-    ipc = 'ipc=0' if ipc is 'netlink' else 'ipc=1'
+    ipc = 'ipc=1' if ipc is 'chardev' else 'ipc=0'
     sh.run('./scripts/setup.sh {} {}'.format(ipc, dest), shell=True)
 
     if startIperf:
