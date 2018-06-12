@@ -183,7 +183,7 @@ if __name__ == '__main__':
         if i not in ipcs:
             continue
         exps = [(alg, 'ccp', '{}-ccp_{}'.format(alg, i)) for alg in wanted_algs if alg in algs]
-        print("> ccp exps:", i, ', '.join(e[-1] for e in exps))
+        print("> ccp_{} exps:".format(i), ', '.join(e[-1] for e in exps))
 
         setup(dest, ipc=i)
         run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
