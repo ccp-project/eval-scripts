@@ -102,16 +102,16 @@ def main():
         for alg in tcp_algs:
             algname = 'reno-{}'.format(alg) if 'ccp' in alg else alg
             # TODO: if ccp, kill all current ccp processes, start ccp
-            #if 'ccp' in alg:
-            #    setup_ccp()
+            if 'ccp' in alg:
+                setup_ccp()
             logname = get_logname(algname, it)
             print("Starting experiment for {}".format(logname))
 
-            #spawn_servers(alg)
-            #processes = spawn_clients(mahimahi_file, client_config_name, logname)
+            spawn_servers(alg)
+            processes = spawn_clients(mahimahi_file, client_config_name, logname)
 
-            #for proc in processes:
-            #    proc.wait()
+            for proc in processes:
+                proc.wait()
 
             kill_processes()
             if 'ccp' in alg:
