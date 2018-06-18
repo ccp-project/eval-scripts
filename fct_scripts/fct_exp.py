@@ -86,8 +86,8 @@ def make_graph_file(NUM_EXPTS, outfile):
             algname = 'reno-{}'.format(alg) if 'ccp' in alg else alg
             logname = get_logname(algname, it)
             sh.check_output("cat {}.fct >> {}".format(logname, outfile), shell=True)
-            sh.check_output("rm {}_flows.out".format(logname, shell=True))
-            sh.check_output("rm {}_reqs.out".format(logname, shell=True))
+            sh.check_output("rm {}_flows.out".format(logname), shell=True)
+            sh.check_output("rm {}_reqs.out".format(logname), shell=True)
             sh.check_output("rm {}.fct".format(logname), shell=True)
 
 
@@ -102,16 +102,16 @@ def main():
         for alg in tcp_algs:
             algname = 'reno-{}'.format(alg) if 'ccp' in alg else alg
             # TODO: if ccp, kill all current ccp processes, start ccp
-            if 'ccp' in alg:
-                setup_ccp()
+            #if 'ccp' in alg:
+            #    setup_ccp()
             logname = get_logname(algname, it)
             print("Starting experiment for {}".format(logname))
 
-            spawn_servers(alg)
-            processes = spawn_clients(mahimahi_file, client_config_name, logname)
+            #spawn_servers(alg)
+            #processes = spawn_clients(mahimahi_file, client_config_name, logname)
 
-            for proc in processes:
-                proc.wait()
+            #for proc in processes:
+            #    proc.wait()
 
             kill_processes()
             if 'ccp' in alg:
@@ -125,6 +125,7 @@ def main():
     # shell = true
     sh.check_output("rm {}".format(client_config_name), shell=True)
     sh.check_output("rm ccp.log", shell=True)
+    sh.check_output("rm {}".format(outfile), shell=True)
 
 if __name__ == "__main__":
     main()
