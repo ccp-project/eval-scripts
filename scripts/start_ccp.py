@@ -11,7 +11,7 @@ algs = {
 
 def start(dest, alg, ipc, name, args):
     subprocess.run('mkdir ./{} 2> /dev/null'.format(dest), shell=True)
-    cmd = 'sudo {0} --ipc={4} {3} > ./{1}/ccp-tmp.log 2> ./{1}/{2}-ccp.log'.format(algs[alg], dest, name, args, ipc)
+    cmd = 'sudo {0} --ipc={4} {3} > ./{1}/ccp-tmp.log 2> ./{1}/{2}-ccp.log'.format(algs[alg], dest, name, args, 'char' if 'char' in ipc else ipc)
     print("> starting ccp: ", cmd)
     ccp_proc = subprocess.run(cmd, shell=True)
 

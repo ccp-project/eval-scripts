@@ -6,7 +6,7 @@ library(ggplot2)
 args <- commandArgs(trailingOnly=TRUE)
 tputs <- read.csv(args[1], sep=" ")
 tputs$Throughput <- tputs$Throughput / 1e9
-summarized <- ddply(tputs, c("NumFlows", "Scenario"), summarise, m=mean(Throughput), sd=sd(Throughput))
+summarized <- ddply(tputs, c("Algorithm", "NumFlows", "Scenario"), summarise, m=mean(Throughput), sd=sd(Throughput))
 
 # line with std-dev ribbon
 #ggplot(summarized, aes(x=NumFlows)) + 
@@ -28,12 +28,30 @@ dodge <- position_dodge(width=0.9)
 ggplot(summarized, aes(x=factor(NumFlows), y=m, fill=Scenario)) + 
     geom_col(aes(x=factor(NumFlows), y=m, fill=Scenario), position=dodge) +
     geom_errorbar(aes(ymin=m-sd,ymax=m+sd), position=dodge) +
-    scale_fill_brewer(
-        type="qual",
+    scale_fill_manual(
+        limits=c(
+            "ccp_netlink_per_10ms-netlink-cubic" = "Cubic CCP (10ms)", 
+            "ccp_netlink_per_ack-netlink-cubic" = "Cubic CCP (Ack)", 
+            "kernel-none-cubic" = "Cubic Kernel",
+            "ccp_netlink_per_10ms-netlink-reno" = "Reno CCP (10ms)", 
+            "ccp_netlink_per_ack-netlink-reno" = "Reno CCP (Ack)", 
+            "kernel-none-reno" = "Reno Kernel"
+        ),
         labels=c(
-            "ccp_per_ack" = "CCP (Ack)", 
-            "ccp_per_10ms" = "CCP (10ms)", 
-            "kernel" = "Kernel"
+            "ccp_netlink_per_10ms-netlink-cubic" = "Cubic CCP (10ms)", 
+            "ccp_netlink_per_ack-netlink-cubic" = "Cubic CCP (Ack)", 
+            "kernel-none-cubic" = "Cubic Kernel",
+            "ccp_netlink_per_10ms-netlink-reno" = "Reno CCP (10ms)", 
+            "ccp_netlink_per_ack-netlink-reno" = "Reno CCP (Ack)", 
+            "kernel-none-reno" = "Reno Kernel"
+        ),
+        values=c(
+            "ccp_netlink_per_10ms-netlink-cubic" = "#238b45", 
+            "ccp_netlink_per_ack-netlink-cubic" = "#66c2a4", 
+            "kernel-none-cubic" = "#b2e2e2",
+            "ccp_netlink_per_10ms-netlink-reno" = "#88419d", 
+            "ccp_netlink_per_ack-netlink-reno" = "#8c96c6", 
+            "kernel-none-reno" = "#b3cde3"
         ),
         guide=guide_legend(title=NULL)
     ) +

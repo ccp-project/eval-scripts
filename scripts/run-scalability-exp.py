@@ -21,6 +21,7 @@ parser.add_argument('--alg', dest='algs', action='append', type=str, nargs='+', 
 parser.add_argument('--ipcs', dest='ipcs', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--scenario', dest='scenarios', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--kernel', dest='with_kernel', action='store_true', default=False)
+parser.add_argument('--plot-only', dest='plot_only', action='store_true', default=False)
 
 scenarios = ('per_ack', 'per_10ms')
 ipcs = ('netlink', 'chardev')
@@ -99,7 +100,7 @@ if __name__ == '__main__':
     dur = parsed.duration
     print("> per-experiment duration (s):", dur)
     maxNumFlows = int(math.log(parsed.numFlows, 2))
-    print("> Up to (flows):", maxNumFlows)
+    print("> Up to (flows):", 1 << maxNumFlows)
 
     scns = list(itertools.chain.from_iterable(parsed.scenarios))
     if 'all' in scns and len(scns) == 1:
@@ -126,15 +127,16 @@ if __name__ == '__main__':
     print("> Using IPCs:", ",".join(wanted_ipcs))
 
     # kernel experiments
-    # for impl, ipc, alg in exps:
-    exps = []
+    kernel_exps = []
     if parsed.with_kernel:
-        exps += [('kernel', 'none', a) for a in wanted_algs if a in algs]
-        print("> kernel exps:", ', '.join(e[-1] for e in exps))
-        setup(dest, startIperf=False)
-        run_exps(dest, exps, maxNumFlows, dur, iters)
+        kernel_exps += [('kernel', 'none', a) for a in wanted_algs if a in algs]
+        print("> kernel exps:", ', '.join(e[-1] for e in kernel_exps))
+        if not parsed.plot_only:
+            setup(dest, startIperf=False)
+            run_exps(dest, kernel_exps, maxNumFlows, dur, iters)
 
     # ccp experiments
+    ccp_exps = []
     for i in wanted_ipcs:
         if i not in ipcs:
             continue
@@ -143,8 +145,11 @@ if __name__ == '__main__':
             exps += [('ccp_{}_{}'.format(i, s), i, alg) for alg in wanted_algs if alg in algs]
         print("> ccp_{} exps:".format(i), ', '.join(e[-1] for e in exps))
 
-        setup(dest, ipc=i, startIperf=False)
-        run_exps(dest, exps, maxNumFlows, dur, iters)
+        if not parsed.plot_only:
+            setup(dest, ipc=i, startIperf=False)
+            run_exps(dest, exps, maxNumFlows, dur, iters)
+        ccp_exps += exps
 
     print()
-    plot(dest, wanted_algs, scns)
+
+    plot(dest, kernel_exps + ccp_exps, maxNumFlows, dur, iters)
