@@ -6,7 +6,7 @@ library(ggplot2)
 args <- commandArgs(trailingOnly=TRUE)
 tputs <- read.csv(args[1], sep=" ")
 tputs$Throughput <- tputs$Throughput / 1e9
-summarized <- ddply(tputs, c("Algorithm", "NumFlows", "Scenario"), summarise, m=mean(Throughput), sd=sd(Throughput))
+summarized <- ddply(tputs, c("Algorithm", "Impl", "NumFlows", "Scenario"), summarise, m=mean(Throughput), sd=sd(Throughput))
 
 # line with std-dev ribbon
 #ggplot(summarized, aes(x=NumFlows)) + 
@@ -25,37 +25,24 @@ summarized <- ddply(tputs, c("Algorithm", "NumFlows", "Scenario"), summarise, m=
 
 # columns with error-bars    
 dodge <- position_dodge(width=0.9)
-ggplot(summarized, aes(x=factor(NumFlows), y=m, fill=Scenario)) + 
-    geom_col(aes(x=factor(NumFlows), y=m, fill=Scenario), position=dodge) +
+ggplot(summarized, aes(x=factor(NumFlows), y=m, fill=Impl)) + 
+    geom_col(aes(x=factor(NumFlows), y=m, fill=Impl), position=dodge) +
     geom_errorbar(aes(ymin=m-sd,ymax=m+sd), position=dodge) +
     scale_fill_manual(
-        limits=c(
-            "ccp_netlink_per_10ms-netlink-cubic" = "Cubic CCP (10ms)", 
-            "ccp_netlink_per_ack-netlink-cubic" = "Cubic CCP (Ack)", 
-            "kernel-none-cubic" = "Cubic Kernel",
-            "ccp_netlink_per_10ms-netlink-reno" = "Reno CCP (10ms)", 
-            "ccp_netlink_per_ack-netlink-reno" = "Reno CCP (Ack)", 
-            "kernel-none-reno" = "Reno Kernel"
-        ),
         labels=c(
-            "ccp_netlink_per_10ms-netlink-cubic" = "Cubic CCP (10ms)", 
-            "ccp_netlink_per_ack-netlink-cubic" = "Cubic CCP (Ack)", 
-            "kernel-none-cubic" = "Cubic Kernel",
-            "ccp_netlink_per_10ms-netlink-reno" = "Reno CCP (10ms)", 
-            "ccp_netlink_per_ack-netlink-reno" = "Reno CCP (Ack)", 
-            "kernel-none-reno" = "Reno Kernel"
+            "ccp_netlink_per_10ms" = "CCP (10ms)", 
+            "ccp_netlink_per_ack" = "CCP (Ack)", 
+            "kernel" = "Kernel"
         ),
         values=c(
-            "ccp_netlink_per_10ms-netlink-cubic" = "#238b45", 
-            "ccp_netlink_per_ack-netlink-cubic" = "#66c2a4", 
-            "kernel-none-cubic" = "#b2e2e2",
-            "ccp_netlink_per_10ms-netlink-reno" = "#88419d", 
-            "ccp_netlink_per_ack-netlink-reno" = "#8c96c6", 
-            "kernel-none-reno" = "#b3cde3"
+            "ccp_netlink_per_10ms" = "#88419d", 
+            "ccp_netlink_per_ack" = "#8c96c6", 
+            "kernel" = "#b3cde3"
         ),
         guide=guide_legend(title=NULL)
     ) +
     labs(x="Flows", y="Throughput (Gbps)") +
+    facet_wrap(~Algorithm) +
     theme_minimal()
 
-ggsave(args[2], width=12, height=6)
+ggsave(args[2], width=6, height=2)
