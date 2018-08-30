@@ -22,6 +22,7 @@ parser.add_argument('--ipcs', dest='ipcs', action='append', type=str, nargs='+',
 parser.add_argument('--scenario', dest='scenarios', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--kernel', dest='with_kernel', action='store_true', default=False)
 parser.add_argument('--plot-only', dest='plot_only', action='store_true', default=False)
+parser.add_argument('--dark-plot', dest='dark_plot', action='store_true', default=False)
 
 scenarios = ('per_ack', 'per_10ms')
 ipcs = ('netlink', 'chardev')
@@ -84,7 +85,7 @@ def plot(dest, exps, maxNumFlows, dur, iters):
     if os.path.exists("./{}/tputs.pdf".format(dest)):
         print("> ./{}/tputs.pdf done".format(dest))
     else:
-        sh.run("./plot/num-flows-tput.r ./{0}/tputs.log ./{0}/tputs.pdf".format(dest,), shell=True)
+        sh.run("./plot/num-flows-tput.r ./{0}/tputs.log ./{0}/tputs.pdf {1}".format(dest, 'dark' if parsed.dark_plot else 'light'), shell=True)
 
 if __name__ == '__main__':
     parsed = parser.parse_args()

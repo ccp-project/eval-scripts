@@ -11,6 +11,7 @@ parser.add_argument('--alg', dest='algs', action='append', type=str, nargs='+', 
 parser.add_argument('--scenario', dest='scenarios', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--ipcs', dest='ipcs', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--kernel', dest='with_kernel', action='store_true', default=False)
+parser.add_argument('--plot-only', dest='plot_only', action='store_true', default=False)
 # link configuration
 parser.add_argument('--delay', dest='linkdelay', type=int, default='10')
 parser.add_argument('--rate', dest='fixedrate', type=int, default='96')
@@ -175,8 +176,9 @@ if __name__ == '__main__':
 
         print("> kernel exps:", ', '.join(e[-1] for e in exps))
 
-        setup(dest)
-        run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
+        if not parsed.plot_only:
+            setup(dest)
+            run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
 
     # ccp experiments
     for i in wanted_ipcs:
@@ -185,8 +187,9 @@ if __name__ == '__main__':
         exps = [(alg, 'ccp', '{}-ccp_{}'.format(alg, i)) for alg in wanted_algs if alg in algs]
         print("> ccp_{} exps:".format(i), ', '.join(e[-1] for e in exps))
 
-        setup(dest, ipc=i)
-        run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
+        if not parsed.plot_only:
+            setup(dest, ipc=i)
+            run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
 
     print()
     plot(dest, wanted_algs, scns)
