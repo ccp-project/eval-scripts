@@ -12,6 +12,7 @@ cd portus && make > ../$2/build_tmp 2> ../$2/build_tmp
 if [ $? -ne 0 ]
 then
     cat ../$2/build_tmp
+    exit 1
 else
     #rm $2/build_tmp
     cd ..
@@ -21,6 +22,7 @@ cd ccp_copa && cargo build > ../$2/build_tmp 2> ../$2/build_tmp
 if [ $? -ne 0 ]
 then
     cat ../$2/build_tmp
+    exit 1
 else
     #rm $2/build_tmp
     cd ..
@@ -30,10 +32,14 @@ cd ccp-kernel && make > ../$2/build_tmp 2> ../$2/build_tmp
 if [ $? -ne 0 ]
 then
     cat ../$2/build_tmp
+    exit 1
 else
     #rm $2/build_tmp
+    echo "---Load ccp-kernel---"
+    ulimit -Sn 8192
+    echo $PWD
+    echo $1
+    sudo ./ccp_kernel_load $1
     cd ..
 fi
 
-ulimit -Sn 8192
-cd ccp-kernel && sudo ./ccp_kernel_load $1 && cd ..

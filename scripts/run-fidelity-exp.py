@@ -4,7 +4,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Run CCP experiments')
 # experiment configuration
-parser.add_argument('--dir', dest='dir', type=str)
+parser.add_argument('--outdir', dest='dir', type=str, required=True, help="Name of directory to place output files, will be created if non-existant")
 parser.add_argument('--iters', dest='iters', type=int)
 parser.add_argument('--duration', dest='duration', type=int)
 parser.add_argument('--alg', dest='algs', action='append', type=str, nargs='+', default=[['all']])

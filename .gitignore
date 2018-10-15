@@ -2,4 +2,4 @@
 *.pdf
 *.eps
 *__pycache__*
-
+.vagrant/
