@@ -4,13 +4,12 @@
 [submodule "mahimahi"]
 	path = mahimahi
 	url = git@github.com:akshayknarayan/mahimahi
-[submodule "fct_scripts/empirical-traffic-gen"]
-	path = fct_scripts/empirical-traffic-gen
-	url = git@github.mit.edu:nebula/empirical-traffic-gen.git
-	branch = ccp
 [submodule "ccp_copa"]
 	path = ccp_copa
 	url = git@github.com:akshayknarayan/ccp_copa.git
 [submodule "portus"]
 	path = portus
 	url = https://github.com/ccp-project/portus
+[submodule "fct_scripts/empiricial-traffic-gen"]
+	path = fct_scripts/empiricial-traffic-gen
+	url = https://github.com/ccp-project/empiricial-traffic-gen
