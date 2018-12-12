@@ -1,12 +1,12 @@
 [submodule "ccp-kernel"]
 	path = ccp-kernel
-	url = git@github.com:ccp-project/ccp-kernel
+	url = https://github.com/ccp-project/ccp-kernel
 [submodule "mahimahi"]
 	path = mahimahi
-	url = git@github.com:akshayknarayan/mahimahi
+	url = https://github.com/akshayknarayan/mahimahi
 [submodule "ccp_copa"]
 	path = ccp_copa
-	url = git@github.com:akshayknarayan/ccp_copa.git
+	url = https://github.com/akshayknarayan/ccp_copa.git
 [submodule "portus"]
 	path = portus
 	url = https://github.com/ccp-project/portus
