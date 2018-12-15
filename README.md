@@ -23,43 +23,44 @@ inside the Vagrant vm) should build all of the necessary components.
 Below is a list of all figures in the paper and the commands necessary to
 reproduce them:
 
-## Figure 3
+## Figure 3: BBR Example
 
-TODO 
+1. Load ccp-kernel: `cd ccp-kernel && sudo ./ccp_kernel_load ipc=0`
+2. Start BBR: `cd bbr && sudo ./target/release/bbr --ipc=netlink`
+3. Start an iperf server: `iperf -s -p 5000`
+4. Start an iperf client with ccp inside mahimahi and with logging:
+`mm-delay 10 mm-link --cbr 48M 48M --uplink-queue="droptail" --downlink-queue="droptail" --uplink-queue-args="packets=160" --downlink-queue-args="packets=160" --log=bbr.log iperf -c $MAHIMAHI_BASE -p 5000 -t 30 -i 1 -Z ccp`
+5. Graph the result: `mm-graph mahimahi.log 20`
 
-## Figure 5
+## Figure 7: Aggregation
 
-TODO
+This script is not currently available. Please contact us for further information.
 
-## Figure 7
+## Figure 8: Write-once run-anywhere
 
-TODO 
+This script is not currently available. Please contact us for further information.
 
-## Figure 8
+## Figure 10: Throughput/Delay Fidelity 
 
-TODO 
+`python3 ./scripts/run-fidelity-exp.py --outdir fidelity --duration 60 --alg cubic --alg reno --scenario fixed --scenario cell --scenario drop --ipcs netlink --kernel --iters 20`
 
-## Figure 9
+# Figure 9: Cubic Example
 
-`python3 ./scripts/run-fidelity-exp.py --outdir fidelity --duration 60 --alg cubic --scenario fixed --ipcs netlink --kernel --iters 1`
+Pick one run for cubic for each of the above and run
+`./plot/cwnd-evo-single.r <args>`
 
-## Figure 1
+## Figure 11: FCT Fidelity
 
-TODO 
+`python3 fct_scripts/fct_exp.py`
 
-## Figure 11
+## Figure 12: IPC Latency
 
-TODO 
+`make ipc100k/ipc.pdf` 
 
-## Figure 12
+## Figure 13: Scalability/Overheads
 
-TODO 
+`./scripts/run-scalabbility-exp.py`
 
-## Figure 13
+## Figure 14: Low-rtt, high bandwidth ns-2 simulation
 
-TODO 
-
-## Figure 14
-
-TODO 
-
+This script is not currently available. Please contact us for further information.

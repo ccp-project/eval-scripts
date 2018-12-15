@@ -1,5 +1,7 @@
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get -y install build-essential autoconf libtool libelf-dev
+sudo apt-get -y install build-essential autoconf libtool libelf-dev 
+# perf
+sudo apt-get -y install linux-tools-common linux-tools-4.15.0-38-generic linux-tools-generic
 # Mahimahi dependencies
 sudo apt-get -y install autotools-dev dh-autoreconf iptables protobuf-compiler libprotobuf-dev pkg-config libssl-dev dnsmasq-base ssl-cert libxcb-present-dev libcairo2-dev libpango1.0-dev iproute2 apache2-dev apache2-bin
 # iperf

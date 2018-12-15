@@ -16,3 +16,12 @@
 [submodule "generic-cong-avoid"]
 	path = generic-cong-avoid
 	url = https://github.com/ccp-project/generic-cong-avoid
+[submodule "tcp_probe_plus"]
+	path = tcp_probe_plus
+	url = https://github.com/lyatiss/tcp_probe_plus.git
+[submodule "tcp_probe_fixed"]
+	path = tcp_probe_fixed
+	url = https://github.com/Dynalon/tcp_probe_fixed.git
+[submodule "bbr"]
+	path = bbr
+	url = https://github.com/ccp-project/bbr

@@ -1,4 +1,4 @@
-all: ccp-kernel/ccp.ko mahimahi cubic reno
+all: ccp-kernel/ccp.ko mahimahi cubic reno bbr
 
 ########################################
 # check that all the submodules are here
@@ -37,13 +37,17 @@ mahimahi: mahimahi/src/frontend/mm-delay
 ./generic-cong-avoid/target/release/reno ./generic-cong-avoid/target/release/cubic:
 	cd generic-cong-avoid && cargo build --release
 
+./bbr/target/release/bbr:
+	cd bbr && cargo build --release
+
 cubic: ./generic-cong-avoid/target/release/cubic
 reno: ./generic-cong-avoid/target/release/reno 
+bbr: ./bbr/target/release/bbr
 
 # Not required for eval, run make python_bindings to install portus as a python lib
 #python_bindings:
 #	cd portus/python && sudo env PATH=$(PATH) python3 setup.py install
 
-ipc100k/ipc.pdf: ipc100k ipc100k/ipc.log
+ipc100k/ipc.pdf: ipc100k/ipc.log
 ipc100k/ipc.log:
 	./scripts/ipc_latency.sh ipc100k
