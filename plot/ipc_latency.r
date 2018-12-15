@@ -5,11 +5,12 @@ library(ggplot2)
 args <- commandArgs(trailingOnly=TRUE)
 d <- read.csv(args[1], sep=" ")
 d$Rtt = d$Rtt / 1e3
+q <- quantile(d$Rtt, 0.99)
 
 ggplot(d, aes(x=Rtt, colour=Impl, linetype=Mode)) + 
     stat_ecdf(alpha=0.8, size=1) +
     xlab("RTT (us)") + ylab("CDF") +
-    xlim(0, 35) +
+    xlim(0, q) +
     scale_colour_brewer(
         type="qual", 
         palette=2, 

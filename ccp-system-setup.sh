@@ -16,7 +16,9 @@ sudo pip3 install setuptools
 sudo pip3 install setuptools_rust
 # mahimahi setup
 echo "sudo sysctl -w net.ipv4.ip_forward=1" >> ~/.bashrc
+
 # plotting dependencies
 sudo apt-get install -y r-base
+sudo apt install -y r-cran-ggplot2
 sudo python -m pip install numpy
 sudo python3 -m pip install numpy

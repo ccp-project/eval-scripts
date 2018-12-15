@@ -34,12 +34,16 @@ mahimahi: mahimahi/src/frontend/mm-delay
 
 # CCP algs
 
-./generic-cong-avoid/target/debug/reno ./generic-cong-avoid/target/debug/cubic:
-	cd generic-cong-avoid && cargo build
+./generic-cong-avoid/target/release/reno ./generic-cong-avoid/target/release/cubic:
+	cd generic-cong-avoid && cargo build --release
 
-cubic: ./generic-cong-avoid/target/debug/cubic
-reno: ./generic-cong-avoid/target/debug/reno 
+cubic: ./generic-cong-avoid/target/release/cubic
+reno: ./generic-cong-avoid/target/release/reno 
 
 # Not required for eval, run make python_bindings to install portus as a python lib
 #python_bindings:
 #	cd portus/python && sudo env PATH=$(PATH) python3 setup.py install
+
+ipc100k/ipc.pdf: ipc100k ipc100k/ipc.log
+ipc100k/ipc.log:
+	./scripts/ipc_latency.sh ipc100k

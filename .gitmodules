@@ -13,3 +13,6 @@
 [submodule "fct_scripts/empiricial-traffic-gen"]
 	path = fct_scripts/empiricial-traffic-gen
 	url = https://github.com/ccp-project/empiricial-traffic-gen
+[submodule "generic-cong-avoid"]
+	path = generic-cong-avoid
+	url = https://github.com/ccp-project/generic-cong-avoid
