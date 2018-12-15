@@ -4,8 +4,8 @@ import sys
 import subprocess
 
 algs = {
-    'reno': './generic_cong_avoid/target/release/reno',
-    'cubic': './generic_cong_avoid/target/release/cubic',
+    'reno': './generic-cong-avoid/target/release/reno',
+    'cubic': './generic-cong-avoid/target/release/cubic',
 #    'copa': './ccp_copa/target/release/copa',
 }
 

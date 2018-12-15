@@ -7,8 +7,8 @@ sudo modprobe tcp_bbr
 sudo modprobe tcp_probe port=4242
 sudo sysctl -w net.ipv4.ip_forward=1
 
-echo "---Build portus---"
-cd portus && make > ../$2/build_tmp 2> ../$2/build_tmp
+echo "---Build cubic, reno---"
+cd generic-cong-avoid && cargo build --release > ../$2/build_tmp 2> ../$2/build_tmp
 if [ $? -ne 0 ]
 then
     cat ../$2/build_tmp
@@ -18,7 +18,7 @@ else
     cd ..
 fi
 echo "---Build ccp_copa---"
-cd ccp_copa && cargo build > ../$2/build_tmp 2> ../$2/build_tmp
+cd ccp_copa && cargo build --release > ../$2/build_tmp 2> ../$2/build_tmp
 if [ $? -ne 0 ]
 then
     cat ../$2/build_tmp
