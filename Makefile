@@ -48,6 +48,13 @@ bbr: ./bbr/target/release/bbr
 #python_bindings:
 #	cd portus/python && sudo env PATH=$(PATH) python3 setup.py install
 
-ipc100k/ipc.pdf: ipc100k/ipc.log
-ipc100k/ipc.log:
+ipc: ipc100k/ipc.pdf
+ipc100k/ipc.pdf: 
 	./scripts/ipc_latency.sh ipc100k
+
+fidelity: fidelity/cubic-fixed-cwndevo.pdf fidelity/reno-fixed-cwndevo.pdf
+fidelity/cubic-fixed-cwndevo.pdf:
+	python3 ./scripts/run-fidelity-exp.py --outdir fidelity --duration 60 --alg cubic --scenario fixed --ipcs netlink --kernel --iters 2
+
+fidelity/reno-fixed-cwndevo.pdf:
+	python3 ./scripts/run-fidelity-exp.py --outdir fidelity --duration 60 --alg reno --scenario fixed --ipcs netlink --kernel --iters 2
