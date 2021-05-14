@@ -1,4 +1,4 @@
-all: ccp-kernel/ccp.ko mahimahi cubic reno bbr
+all: ccp-kernel/ccp.ko mahimahi empirical-traffic-gen cubic reno bbr
 
 ########################################
 # check that all the submodules are here
@@ -14,6 +14,7 @@ mahimahi/src/frontend/delayshell.cc ccp-kernel/libccp/ccp.h:
 clean:
 	$(MAKE) -C ccp-kernel clean
 	$(MAKE) -C mahimahi clean
+	$(MAKE) -C fct_scripts/empirical-traffic-gen clean
 
 ccp-kernel/ccp.ko: ccp-kernel/libccp/ccp.h
 	$(MAKE) -C ccp-kernel
@@ -31,6 +32,11 @@ mahimahi/src/frontend/mm-delay: mahimahi/src/frontend/delayshell.cc mahimahi/Mak
 
 mahimahi: mahimahi/src/frontend/mm-delay
 	sudo $(MAKE) -C mahimahi install
+
+# Empirical traffic gen
+
+empirical-traffic-gen:
+	$(MAKE) -C fct_scripts/empirical-traffic-gen
 
 # CCP algs
 
