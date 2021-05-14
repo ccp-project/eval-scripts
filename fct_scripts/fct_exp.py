@@ -6,13 +6,13 @@ import subprocess as sh
 tcp_algs = ["ccp", "reno"]
 num_experiments = 1
 NUM_SERVERS = 50
-CAIDA_FILE =  "./empirical-traffic-gen/CAIDA_CDF"
+CAIDA_FILE =  "/ccp/fct_scripts/empirical-traffic-gen/CAIDA_CDF"
 client_config_params = {"load": "72Mbps", "fanout": "1 100", "num_reqs": "100000", "req_size_dist": CAIDA_FILE}
-server_binary = "./empirical-traffic-gen/bin/server"
-client_binary = "./empirical-traffic-gen/bin/client"
+server_binary = "/ccp/fct_scripts/empirical-traffic-gen/bin/server"
+client_binary = "/ccp/fct_scripts/empirical-traffic-gen/bin/client"
 tmp_file = "a.txt"
 NUM_EXPTS = 1
-PLOTTING_SCRIPT = "../plot/fct.r"
+PLOTTING_SCRIPT = "/ccp/plot/fct.r"
 
 
 # should be a multiple of 8
@@ -57,7 +57,7 @@ def spawn_servers(alg):
 
 def spawn_clients(mahimahi_file, exp_config, logname):
     # run mahimahi, set fq on the interface & run the client file
-    mahimahi_command = "mm-delay 25 mm-link {} {} --downlink-queue=droptail --downlink-queue-args=\'packets=800\' ./client_script.sh {} {}".format(mahimahi_file, mahimahi_file, exp_config, logname)
+    mahimahi_command = "mm-delay 25 mm-link {} {} --downlink-queue=droptail --downlink-queue-args=\'packets=800\' ./fct_scripts/client_script.sh {} {}".format(mahimahi_file, mahimahi_file, exp_config, logname)
     # command to set fq on the interface
     find_mahimahi = "sleep 1; x=$(ifconfig | grep delay | awk '{print $1}'| sed 's/://g') && sudo tc qdisc add dev $x root fq && echo $x"
     processes = []
