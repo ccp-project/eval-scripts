@@ -54,9 +54,6 @@ def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
 
                 print(">", outprefix)
 
-                sh.run("sudo dd if=/dev/null of=/proc/net/tcpprobe 2> /dev/null", shell=True)
-                sh.run('sudo dd if=/proc/net/tcpprobe of="./{}/{}-tmp.log" 2> /dev/null &'.format(dest, outprefix), shell=True)
-
                 if trace == 'fixed':
                     sh.run('mm-delay {4} \
                             mm-link ./mm-traces/bw{5}.mahi ./mm-traces/bw{5}.mahi \
@@ -85,9 +82,7 @@ def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
                     print('unknown', trace)
                     sys.exit(1)
 
-                sh.run("sudo killall dd 2> /dev/null", shell=True)
-                sh.run('grep ":4242" "./{0}/{1}-tmp.log" > "./{0}/{1}-tcpprobe.log"'.format(dest, outprefix), shell=True)
-                sh.run('rm -f "./{}/{}-tmp.log"'.format(dest, outprefix), shell=True)
+                sh.run('sudo trace-cmd report "./{0}/{1}-trace-tcpprobe.dat" | grep ":4242" > "./{0}/{1}-tcpprobe.log"'.format(dest, outprefix), shell=True)
                 sh.run("mm-graph ./{0}/{1}-mahimahi.log 30 > ./{0}/{1}-mahimahi.eps 2> ./{0}/{1}-mmgraph.log".format(dest, outprefix), shell=True)
 
                 if sockopt == 'ccp':

@@ -8,11 +8,11 @@ def read(fn):
     with open(fn, 'r') as f:
         for line in f:
             sp = line.split()
-            if len(sp) != 11:
+            if len(sp) != 16:
                 continue
-            if '4242' not in sp[2]:
+            if '4242' not in sp[5]:
                 continue
-            yield float(sp[0]), float(sp[6]) # rtt = sp[-2]
+            yield float(sp[2][:-1]), float(sp[10].split('=')[-1]) # rtt = sp[-3]
 
 # filenames: <alg>-<impl>-<scenario>-<i>-tcpprobe.log
 def binAlgs(fns):
@@ -34,8 +34,6 @@ if __name__ == '__main__':
     plots = binAlgs(sys.argv[1:])
     iters = max(int(pl[-1]) for pl in plots) + 1
     for pl in plots:
-        ccp = None
-        kernel = None
         for fn in plots[pl]:
             ts, cwnd = zip(*read(fn))
             ts = np.array(ts) - min(ts)

@@ -4,7 +4,6 @@
 
 # don't need to be un-done
 sudo modprobe tcp_bbr
-sudo modprobe tcp_probe port=4242
 sudo sysctl -w net.ipv4.ip_forward=1
 
 echo "---Build cubic, reno---"
