@@ -11,23 +11,27 @@ version of Linux with all of the proper dependencies. Simply install
 create a new Linux VM with this directory (eval-scripts/) linked as `/ccp`
 inside the VM. You can access the VM by running `vagrant ssh`.
 
-If you already have a Linux machine or VM and you do not wish to use Vagrant you can simply clone this
-repository and run the `ccp-system-setup.sh`. All of our experiments were run on
-a machine with Ubuntu 17.10 (Linux 4.13). We rely on tcpprobe for congestion window instrumentation, which was removed in the latest Ubuntu LTS release (18.04 -> kernel 4.15). Therefore unfortunately we cannot support these scripts on newer kernels.
-
 Once you have a machine setup, simply running `make` inside this directory (or `/ccp`
 inside the Vagrant VM) should build all of the necessary components. 
 
 Below is a list of all figures in the paper and the commands necessary to run the corresponding experiment.
+
+### Kernel Version
+If you already have a Linux machine or VM and you do not wish to use Vagrant you can simply clone this
+repository and run the `ccp-system-setup.sh`. All of our original experiments were run on
+a machine with Ubuntu 17.10 (Linux 4.13). 
+For certain experiments, we relied on `tcpprobe` for congestion window instrumentation, which was removed in newer kernel versions. Therefore, some scripts may not work on newer kernels, but newer versions of CCP (which this repository now points to) run on newer kernels (we have tested kernel 5.4).
 
 ## Figure 3: BBR Example
 
 1. Load ccp-kernel: `cd ccp-kernel && sudo ./ccp_kernel_load ipc=0`
 2. Start BBR: `cd bbr && sudo ./target/release/bbr --ipc=netlink`
 3. Start an iperf server: `iperf -s -p 5000`
-4. Start an iperf client with ccp inside mahimahi and with logging:
-`mm-delay 10 mm-link --cbr 48M 48M --uplink-queue="droptail" --downlink-queue="droptail" --uplink-queue-args="packets=160" --downlink-queue-args="packets=160" --log=bbr.log iperf -c $MAHIMAHI_BASE -p 5000 -t 30 -i 1 -Z ccp`
-5. Graph the result: `mm-graph mahimahi.log 20`
+4. Start mahimahi with logging:
+`mm-delay 10 mm-link --cbr 48M 48M --uplink-queue="droptail" --downlink-queue="droptail" --uplink-queue-args="packets=160" --downlink-queue-args="packets=160" --uplink-log=bbr.log`
+5. Inside the mahimahi shell, start a CCP-enabled iperf sender: `iperf -c $MAHIMAHI_BASE -p 5000 -t 30 -i 1 -Z ccp`
+6. Graph the result: `mm-graph mahimahi.log 20`
+7. Result will be in `bbr.eps`.
 
 This process is automated in the following script.
 
