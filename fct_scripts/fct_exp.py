@@ -75,7 +75,11 @@ def setup_ccp():
         sh.check_output("sudo pkill reno", shell=True)
     except:
         # run portus
-        sh.Popen(["sudo ./../portus/ccp_generic_cong_avoid/target/debug/reno > ccp.log 2>&1 --ipc netlink"], shell=True)
+        pass
+    print("==> Start CCP Reno")
+    sh.Popen(["sudo ./generic-cong-avoid/target/release/reno --ipc netlink 2>&1 > ccp.log"], shell=True)
+
+
 def get_logname(algname, it):
     return "{}-{}-{}-{}-{}".format(algname, it, client_config_params['load'], client_config_params['num_reqs'], "CAIDA_CDF")
 
