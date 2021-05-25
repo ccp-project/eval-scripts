@@ -6,13 +6,13 @@ import subprocess as sh
 tcp_algs = ["ccp", "reno"]
 num_experiments = 1
 NUM_SERVERS = 50
-CAIDA_FILE =  "/ccp/fct_scripts/empirical-traffic-gen/CAIDA_CDF"
+CAIDA_FILE =  "./fct_scripts/empirical-traffic-gen/CAIDA_CDF"
 client_config_params = {"load": "72Mbps", "fanout": "1 100", "num_reqs": "100000", "req_size_dist": CAIDA_FILE}
-server_binary = "/ccp/fct_scripts/empirical-traffic-gen/bin/server"
-client_binary = "/ccp/fct_scripts/empirical-traffic-gen/bin/client"
+server_binary = "./fct_scripts/empirical-traffic-gen/bin/server"
+client_binary = "./fct_scripts/empirical-traffic-gen/bin/client"
 tmp_file = "a.txt"
 NUM_EXPTS = 1
-PLOTTING_SCRIPT = "/ccp/plot/fct.r"
+PLOTTING_SCRIPT = "./plot/fct.r"
 
 
 # should be a multiple of 8
@@ -50,7 +50,7 @@ def write_client_config(config_filename, params):
         f.write("{} {}\n".format(key, params[key]))
 
 def spawn_servers(alg):
-    processes = []
+    print(f"==> Starting empirical traffic gen server alg={alg} path={server_binary} num={NUM_SERVERS}")
     for i in range(NUM_SERVERS):
         #processes.append(sh.Popen[server_binary, "-t", alg, "-p", port(i)], shell=True)
         sh.Popen(["{} -t {} -p {} >> /dev/null".format(server_binary, alg, port(i))], shell=True)
@@ -105,7 +105,7 @@ def main():
             if 'ccp' in alg:
                 setup_ccp()
             logname = get_logname(algname, it)
-            print("Starting experiment for {}".format(logname))
+            print("=> Starting experiment for {}".format(logname))
 
             spawn_servers(alg)
             processes = spawn_clients(mahimahi_file, client_config_name, logname)
@@ -118,7 +118,7 @@ def main():
                 get_log(logname, "ccp_plain")
             else:
                 get_log(logname, "kernel_plain")
-    
+
     make_graph_file(NUM_EXPTS, outfile)
     sh.check_output("{} {}".format(PLOTTING_SCRIPT, outfile), shell=True)
 
