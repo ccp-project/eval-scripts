@@ -104,26 +104,17 @@ def plot(dest, algs_to_plot, scenarios_to_plot):
     print("> Plotting")
     for alg in algs_to_plot:
         for s in scenarios_to_plot:
-            if not os.path.exists("{0}/{1}-{2}-cwndevo.pdf".format(dest, alg, s)):
-                sh.run('./plot/cwnd-evo.r {0}/cwndevo-subsampled.log {1} {2} {0}/{1}-{2}-cwndevo.pdf'.format(dest, alg, s), shell=True)
-                print("> wrote {0}/{1}-cwndevo.pdf".format(dest, alg))
-            else:
-                print("> {0}/{1}-{2}-cwndevo.pdf' already present".format(dest, alg, s))
+            sh.run('./plot/cwnd-evo.r {0}/cwndevo-subsampled.log {1} {2} {0}/{1}-{2}-cwndevo.pdf'.format(dest, alg, s), shell=True)
+            print("> wrote {0}/{1}-cwndevo.pdf".format(dest, alg))
 
     print("Throughput-Delay CDF Plots")
     print("=========================")
-    if not os.path.exists("{0}/tput-delay-cdf.log".format(dest)):
-        print("> Parsing logs")
-        sh.run('python3 parse/parseTputDelayCdf.py {0}/* > {0}/tput-delay-cdf.log'.format(dest), shell=True)
-    else:
-        print("> Logs already parsed")
+    print("> Parsing logs")
+    sh.run('python3 parse/parseTputDelayCdf.py {0}/* > {0}/tput-delay-cdf.log'.format(dest), shell=True)
 
     print("> Plotting") # all experiments combined, not separate
-    if not os.path.exists("{0}/tput-cdf.pdf".format(dest)) or not os.path.exists("{0}/delay-cdf.pdf".format(dest)):
-        sh.run('./plot/tput-delay-cdf.r {0}/tput-delay-cdf.log {0}/tput-cdf.pdf {0}/delay-cdf.pdf'.format(dest), shell=True)
-        print("> wrote {0}/tput-cdf.pdf, {0}/delay-cdf.pdf".format(dest))
-    else:
-        print("> {0}/tput-cdf.pdf, {0}/delay-cdf.pdf already present".format(dest))
+    sh.run('./plot/tput-delay-cdf.r {0}/tput-delay-cdf.log {0}/tput-cdf.pdf {0}/delay-cdf.pdf'.format(dest), shell=True)
+    print("> wrote {0}/tput-cdf.pdf, {0}/delay-cdf.pdf".format(dest))
 
 if __name__ == '__main__':
     parsed = parser.parse_args()
